@@ -89,6 +89,7 @@ class MemberV2(model_base.BASEV2, model_base.HasId, model_base.HasProject):
     provisioning_status = sa.Column(sa.String(16), nullable=False)
     operating_status = sa.Column(sa.String(16), nullable=False)
     name = sa.Column(sa.String(db_const.NAME_FIELD_SIZE), nullable=True)
+    member_status = sa.Column(sa.String(16), nullable=False)
 
     @property
     def root_loadbalancer(self):
@@ -155,6 +156,7 @@ class LoadBalancer(model_base.BASEV2, model_base.HasId, model_base.HasProject):
         viewonly=True)
     flavor_id = sa.Column(sa.String(36), sa.ForeignKey(
         'flavors.id', name='fk_lbaas_loadbalancers_flavors_id'))
+    bandwidth = sa.Column(sa.Integer(), nullable=True)
 
     @property
     def root_loadbalancer(self):
@@ -359,6 +361,13 @@ class Listener(model_base.BASEV2, model_base.HasId, model_base.HasProject):
         foreign_keys=[L7Policy.listener_id],
         cascade="all, delete-orphan",
         backref=orm.backref("listener"))
+    redirect_up = sa.Column(sa.Boolean(), nullable=True)
+    redirect_protocol = sa.Column(sa.Enum(*lb_const.LISTENER_SUPPORTED_PROTOCOLS,
+                                 name="listener_protocolsv2"),
+                                 nullable=False)
+    redirect_port = sa.Column(sa.Integer(), nullable=True)
+    mutual_authentication_up = sa.Column(sa.Boolean(), nullable=True)
+    ca_container_id = sa.Column(sa.String(36), nullable=True)
 
     @property
     def root_loadbalancer(self):

@@ -15,6 +15,7 @@
 
 import re
 
+import json
 import netaddr
 from neutron.callbacks import events
 from neutron.callbacks import registry
@@ -943,6 +944,56 @@ class LoadBalancerPluginDbv2(base_db.CommonDbMixin,
         return [data_models.L7Rule.from_sqlalchemy_model(rule_db)
                 for rule_db in rule_dbs]
 
+    # get f5 device ip
+    def get_lbaas_agent_rebind_ips(self, context, loadbalancer_id):
+        """Return the agent that is hosting the loadbalancer."""
+        LOG.debug('Getting agent for loadbalancer %s' %
+                  (loadbalancer_id))
+        f5_ips = []
+        with context.session.begin(subtransactions=True):
+            # returns {'agent': agent_dict}
+            lbaas_agent = self._core_plugin.get_agent_hosting_loadbalancer(
+                context,
+                loadbalancer_id
+            )
+            # if the agent bound to this loadbalancer is alive, return it
+            if lbaas_agent is not None:
+                if (not lbaas_agent['agent']['alive'] or
+                    not lbaas_agent['agent']['admin_state_up']):
+                    # The agent bound to this loadbalancer is not live
+                    # or is not active. Find another agent in the same
+                    # environment and environment group if possible
+                    ac = self.deserialize_agent_configurations(
+                        lbaas_agent['agent']['configurations']
+                    )
+                    # get a environment group number for the bound agent
+                    if 'environment_group_number' in ac:
+                        gn = ac['environment_group_number']
+                    else:
+                        gn = 1
+                    endpoints= ac['icontrol_endpoints']
+                    for key in endpoints:
+                        LOG.debug("ip is %s", key)
+                        f5_ips.append(key)
+
+
+                    #
+                    # reassigned_agent = self.rebind_loadbalancers(
+                    #     context, plugin, env, gn, lbaas_agent['agent'])
+                    # if reassigned_agent:
+                    #     lbaas_agent = {'agent': reassigned_agent}
+
+            return f5_ips
+    def deserialize_agent_configurations(self, agent_conf):
+        """Return a dictionary for the agent configuration."""
+        if not isinstance(agent_conf, dict):
+            try:
+                agent_conf = json.loads(agent_conf)
+            except ValueError as ve:
+                LOG.error("Can't decode JSON %s : %s"
+                          % (agent_conf, ve.message))
+                return {}
+        return agent_conf
 
 def _prevent_lbaasv2_port_delete_callback(resource, event, trigger, **kwargs):
     context = kwargs['context']

@@ -29,9 +29,9 @@ from alembic import op
 import sqlalchemy as sa
 
 
-listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP",
+listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP",
                              name="listener_protocolsv2")
-pool_protocols = sa.Enum("HTTP", "HTTPS", "TCP",
+pool_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP",
                          name="pool_protocolsv2")
 sesssionpersistences_type = sa.Enum("SOURCE_IP", "HTTP_COOKIE", "APP_COOKIE",
                                     name="sesssionpersistences_typev2")

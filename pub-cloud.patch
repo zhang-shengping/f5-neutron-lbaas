@@ -1,0 +1,668 @@
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add.py	(nonexistent)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add.py	(revision 47631)
+@@ -0,0 +1,36 @@
++from alembic import op
++import sqlalchemy as sa
++
++from neutron.db import migration
++
++
++# revision identifiers, used by Alembic.
++revision = 'rg_cmcc'
++down_revision = '844352f9fe6f'
++
++
++# milestone identifier, used by neutron-db-manage
++neutron_milestone = [migration.NEWTON]
++
++
++def upgrade():
++    # memeber
++    op.add_column('lbaas_members', sa.Column(
++        u'bandwidth', sa.Integer(), nullable=True))
++
++    # listeners
++    op.add_column('lbaas_listeners', sa.Column(
++        u'redirect', sa.Boolean(), nullable=True
++    ))
++    op.add_column('lbaas_listeners', sa.Column(
++        u'redirect_protocol', sa.String(36), nullable=True
++    ))
++    op.add_column('lbaas_listeners', sa.Column(
++        u'redirect_port', sa.Integer(), nullable=True
++    ))
++    op.add_column('lbaas_listeners', sa.Column(
++        u'mutual_authentication_u', sa.Boolean(), nullable=True
++    ))
++    op.add_column('lbaas_listeners', sa.Column(
++        u'ca_container_id', sa.String(36), nullable=True
++    ))
+\ No newline at end of file
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp1.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp1.py	(nonexistent)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp1.py	(revision 47631)
+@@ -0,0 +1,24 @@
++from alembic import op
++import sqlalchemy as sa
++
++from neutron.db import migration
++
++
++# revision identifiers, used by Alembic.
++revision = 'rg_cmcc_v0.1'
++down_revision = 'rg_cmcc'
++
++
++# milestone identifier, used by neutron-db-manage
++neutron_milestone = [migration.NEWTON]
++
++
++def upgrade():
++
++    # listeners
++    op.add_column('lbaas_listeners', sa.Column(
++        u'redirect_up', sa.Boolean(), nullable=True
++    ))
++    op.add_column('lbaas_listeners', sa.Column(
++        u'mutual_authentication_up', sa.Boolean(), nullable=True
++    ))
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp2.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp2.py	(nonexistent)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp2.py	(revision 47631)
+@@ -0,0 +1,31 @@
++from alembic import op
++import sqlalchemy as sa
++
++from neutron.db import migration
++
++
++# revision identifiers, used by Alembic.
++revision = 'rg_cmcc_v0.2'
++down_revision = 'rg_cmcc_v0.1'
++
++
++# milestone identifier, used by neutron-db-manage
++neutron_milestone = [migration.NEWTON]
++
++listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP", "TERMINATED_HTTPS",
++                             name="listener_protocolsv2")
++pool_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP", "TERMINATED_HTTPS",
++                         name="pool_protocolsv2")
++
++def upgrade():
++
++    op.drop_column(u'lbaas_listeners', 'protocol')
++    op.drop_column(u'lbaas_listeners', 'redirect_protocol')
++    op.add_column('lbaas_listeners', sa.Column(
++        u'redirect_protocol', listener_protocols, nullable=True
++    ))
++    op.add_column('lbaas_listeners', sa.Column(
++        u'protocol', listener_protocols, nullable=True
++    ))
++    op.drop_column('lbaas_pools', 'protocol')
++    op.add_column('lbaas_pools', sa.Column(u'protocol', pool_protocols, nullable=True))
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp3.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp3.py	(nonexistent)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp3.py	(revision 47631)
+@@ -0,0 +1,21 @@
++from alembic import op
++import sqlalchemy as sa
++
++from neutron.db import migration
++
++
++# revision identifiers, used by Alembic.
++revision = 'rg_cmcc_v0.3'
++down_revision = 'rg_cmcc_v0.2'
++
++
++# milestone identifier, used by neutron-db-managerg_cmcc_add_tmp3.py
++neutron_milestone = [migration.NEWTON]
++
++def upgrade():
++
++    op.drop_column(u'lbaas_members', 'bandwidth')
++    op.add_column('lbaas_loadbalancers', sa.Column(
++        u'bandwidth', sa.Integer(), nullable=True
++    ))
++
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp4.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp4.py	(nonexistent)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp4.py	(revision 47631)
+@@ -0,0 +1,25 @@
++from alembic import op
++import sqlalchemy as sa
++
++from neutron.db import migration
++
++
++# revision identifiers, used by Alembic.
++revision = 'rg_cmcc_v0.4'
++down_revision = 'rg_cmcc_v0.3'
++
++
++# milestone identifier, used by neutron-db-managerg_cmcc_add_tmp3.py
++neutron_milestone = [migration.NEWTON]
++
++listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP", "TERMINATED_HTTPS",
++                             name="listener_protocolsv2")
++pool_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP", "TERMINATED_HTTPS",
++                         name="pool_protocolsv2")
++
++def upgrade():
++    migration.alter_enum('lbaas_listeners', 'protocol', listener_protocols,
++                         nullable=False)
++
++    migration.alter_enum('lbaas_pools', 'protocol', pool_protocols,
++                         nullable=False)
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp5.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp5.py	(nonexistent)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp5.py	(revision 47631)
+@@ -0,0 +1,18 @@
++from alembic import op
++import sqlalchemy as sa
++
++from neutron.db import migration
++
++
++# revision identifiers, used by Alembic.
++revision = 'rg_cmcc_v0.5'
++down_revision = 'rg_cmcc_v0.4'
++
++
++# milestone identifier, used by neutron-db-managerg_cmcc_add_tmp3.py
++neutron_milestone = [migration.NEWTON]
++
++
++def upgrade():
++    op.add_column('lbaas_members', sa.Column(
++        u'member_status', sa.String(16), nullable=False))
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp6.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp6.py	(nonexistent)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/newton/expand/rg_cmcc_add_tmp6.py	(revision 47631)
+@@ -0,0 +1,18 @@
++from alembic import op
++import sqlalchemy as sa
++
++from neutron.db import migration
++
++
++# revision identifiers, used by Alembic.
++revision = 'rg_cmcc_v0.6'
++down_revision = 'rg_cmcc_v0.5'
++
++
++# milestone identifier, used by neutron-db-managerg_cmcc_add_tmp3.py
++neutron_milestone = [migration.NEWTON]
++
++
++def upgrade():
++    migration.alter_enum('lbaas_listeners', 'ca_container_id', sa.String(128),
++                         nullable=False)
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/lbaasv2.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/lbaasv2.py	(revision 47630)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/lbaasv2.py	(revision 47631)
+@@ -29,9 +29,9 @@
+ import sqlalchemy as sa
+ 
+ 
+-listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP",
++listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP",
+                              name="listener_protocolsv2")
+-pool_protocols = sa.Enum("HTTP", "HTTPS", "TCP",
++pool_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP",
+                          name="pool_protocolsv2")
+ sesssionpersistences_type = sa.Enum("SOURCE_IP", "HTTP_COOKIE", "APP_COOKIE",
+                                     name="sesssionpersistences_typev2")
+Index: neutron_lbaas/db/migration/alembic_migrations/versions/lbaasv2_tls.py
+===================================================================
+--- neutron_lbaas/db/migration/alembic_migrations/versions/lbaasv2_tls.py	(revision 47630)
++++ neutron_lbaas/db/migration/alembic_migrations/versions/lbaasv2_tls.py	(revision 47631)
+@@ -31,9 +31,9 @@
+ from neutron.db import migration
+ 
+ 
+-old_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP",
++old_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP",
+                              name="listener_protocolsv2")
+-new_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "TERMINATED_HTTPS",
++new_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "TERMINATED_HTTPS", "UDP",
+                              name="listener_protocolsv2")
+ 
+ 
+Index: neutron_lbaas/db/loadbalancer/models.py
+===================================================================
+--- neutron_lbaas/db/loadbalancer/models.py	(revision 47630)
++++ neutron_lbaas/db/loadbalancer/models.py	(revision 47631)
+@@ -89,6 +89,7 @@
+     provisioning_status = sa.Column(sa.String(16), nullable=False)
+     operating_status = sa.Column(sa.String(16), nullable=False)
+     name = sa.Column(sa.String(db_const.NAME_FIELD_SIZE), nullable=True)
++    member_status = sa.Column(sa.String(16), nullable=False)
+ 
+     @property
+     def root_loadbalancer(self):
+@@ -155,6 +156,7 @@
+         viewonly=True)
+     flavor_id = sa.Column(sa.String(36), sa.ForeignKey(
+         'flavors.id', name='fk_lbaas_loadbalancers_flavors_id'))
++    bandwidth = sa.Column(sa.Integer(), nullable=True)
+ 
+     @property
+     def root_loadbalancer(self):
+@@ -359,6 +361,13 @@
+         foreign_keys=[L7Policy.listener_id],
+         cascade="all, delete-orphan",
+         backref=orm.backref("listener"))
++    redirect_up = sa.Column(sa.Boolean(), nullable=True)
++    redirect_protocol = sa.Column(sa.Enum(*lb_const.LISTENER_SUPPORTED_PROTOCOLS,
++                                 name="listener_protocolsv2"),
++                                 nullable=False)
++    redirect_port = sa.Column(sa.Integer(), nullable=True)
++    mutual_authentication_up = sa.Column(sa.Boolean(), nullable=True)
++    ca_container_id = sa.Column(sa.String(36), nullable=True)
+ 
+     @property
+     def root_loadbalancer(self):
+Index: neutron_lbaas/db/loadbalancer/loadbalancer_dbv2.py
+===================================================================
+--- neutron_lbaas/db/loadbalancer/loadbalancer_dbv2.py	(revision 47630)
++++ neutron_lbaas/db/loadbalancer/loadbalancer_dbv2.py	(revision 47631)
+@@ -15,6 +15,7 @@
+ 
+ import re
+ 
++import json
+ import netaddr
+ from neutron.callbacks import events
+ from neutron.callbacks import registry
+@@ -943,7 +944,57 @@
+         return [data_models.L7Rule.from_sqlalchemy_model(rule_db)
+                 for rule_db in rule_dbs]
+ 
++    # get f5 device ip
++    def get_lbaas_agent_rebind_ips(self, context, loadbalancer_id):
++        """Return the agent that is hosting the loadbalancer."""
++        LOG.debug('Getting agent for loadbalancer %s' %
++                  (loadbalancer_id))
++        f5_ips = []
++        with context.session.begin(subtransactions=True):
++            # returns {'agent': agent_dict}
++            lbaas_agent = self._core_plugin.get_agent_hosting_loadbalancer(
++                context,
++                loadbalancer_id
++            )
++            # if the agent bound to this loadbalancer is alive, return it
++            if lbaas_agent is not None:
++                if (not lbaas_agent['agent']['alive'] or
++                    not lbaas_agent['agent']['admin_state_up']):
++                    # The agent bound to this loadbalancer is not live
++                    # or is not active. Find another agent in the same
++                    # environment and environment group if possible
++                    ac = self.deserialize_agent_configurations(
++                        lbaas_agent['agent']['configurations']
++                    )
++                    # get a environment group number for the bound agent
++                    if 'environment_group_number' in ac:
++                        gn = ac['environment_group_number']
++                    else:
++                        gn = 1
++                    endpoints= ac['icontrol_endpoints']
++                    for key in endpoints:
++                        LOG.debug("ip is %s", key)
++                        f5_ips.append(key)
+ 
++
++                    #
++                    # reassigned_agent = self.rebind_loadbalancers(
++                    #     context, plugin, env, gn, lbaas_agent['agent'])
++                    # if reassigned_agent:
++                    #     lbaas_agent = {'agent': reassigned_agent}
++
++            return f5_ips
++    def deserialize_agent_configurations(self, agent_conf):
++        """Return a dictionary for the agent configuration."""
++        if not isinstance(agent_conf, dict):
++            try:
++                agent_conf = json.loads(agent_conf)
++            except ValueError as ve:
++                LOG.error("Can't decode JSON %s : %s"
++                          % (agent_conf, ve.message))
++                return {}
++        return agent_conf
++
+ def _prevent_lbaasv2_port_delete_callback(resource, event, trigger, **kwargs):
+     context = kwargs['context']
+     port_id = kwargs['port_id']
+Index: neutron_lbaas/extensions/loadbalancerv2.py
+===================================================================
+--- neutron_lbaas/extensions/loadbalancerv2.py	(revision 47630)
++++ neutron_lbaas/extensions/loadbalancerv2.py	(revision 47631)
+@@ -190,7 +190,12 @@
+         'flavor_id': {'allow_post': True, 'allow_put': False,
+                       'is_visible': True,
+                       'validate': {'type:string': db_const.NAME_FIELD_SIZE},
+-                      'default': n_constants.ATTR_NOT_SPECIFIED}
++                      'default': n_constants.ATTR_NOT_SPECIFIED},
++        'bandwidth': {'allow_post': True, 'allow_put': True,
++                      'default': 1,
++                      'validate': {'type:range': [0, 100000],
++                                   'type:integer': None},
++                      'is_visible': True},
+     },
+     'listeners': {
+         'id': {'allow_post': False, 'allow_put': False,
+@@ -244,7 +249,29 @@
+         'admin_state_up': {'allow_post': True, 'allow_put': True,
+                            'default': True,
+                            'convert_to': converters.convert_to_boolean,
+-                           'is_visible': True}
++                           'is_visible': True},
++        'redirect_up': {'allow_post': True, 'allow_put': True,
++                     'default': True,
++                     'convert_to': converters.convert_to_boolean,
++                     'is_visible': True},
++        'redirect_protocol': {'allow_post': True, 'allow_put': False,
++                              'validate': {'type:values':
++                                            lb_const.LISTENER_SUPPORTED_PROTOCOLS},
++                              'default': lb_const.PROTOCOL_HTTP,
++                              'is_visible': True},
++        'redirect_port': {'allow_post': True, 'allow_put': False,
++                          'validate': {'type:range': [1, 65535]},
++                          'convert_to': converters.convert_to_int,
++                          'default': 80,
++                          'is_visible': True},
++        'mutual_authentication_up': {'allow_post': True, 'allow_put': True,
++                                    'default': True,
++                                    'convert_to': converters.convert_to_boolean,
++                                    'is_visible': True},
++        'ca_container_id': {'allow_post': True, 'allow_put': True,
++                            'validate': {'type:string': db_const.NAME_FIELD_SIZE},
++                            'default': '',
++                            'is_visible': True},
+     },
+     'pools': {
+         'id': {'allow_post': False, 'allow_put': False,
+@@ -396,6 +423,14 @@
+                      'validate': {'type:string': db_const.NAME_FIELD_SIZE},
+                      'default': '',
+                      'is_visible': True},
++            'member_status': {'allow_post': True, 'allow_put': True,
++                     'validate': {'type:string': db_const.NAME_FIELD_SIZE},
++                     'default': '',
++                     'is_visible': True},
++            'operating_status': {'allow_post': True, 'allow_put': True,
++                     'validate': {'type:string': db_const.NAME_FIELD_SIZE},
++                     'default': '',
++                     'is_visible': True},
+         }
+     }
+ }
+Index: neutron_lbaas/services/loadbalancer/constants.py
+===================================================================
+--- neutron_lbaas/services/loadbalancer/constants.py	(revision 47630)
++++ neutron_lbaas/services/loadbalancer/constants.py	(revision 47631)
+@@ -24,15 +24,17 @@
+ PROTOCOL_HTTP = 'HTTP'
+ PROTOCOL_HTTPS = 'HTTPS'
+ PROTOCOL_TERMINATED_HTTPS = 'TERMINATED_HTTPS'
+-POOL_SUPPORTED_PROTOCOLS = (PROTOCOL_TCP, PROTOCOL_HTTPS, PROTOCOL_HTTP)
++PROTOCOL_UDP = 'UDP'
++POOL_SUPPORTED_PROTOCOLS = (PROTOCOL_TCP, PROTOCOL_HTTPS, PROTOCOL_HTTP, PROTOCOL_UDP)
+ LISTENER_SUPPORTED_PROTOCOLS = (PROTOCOL_TCP, PROTOCOL_HTTPS, PROTOCOL_HTTP,
+-                                PROTOCOL_TERMINATED_HTTPS)
++                                PROTOCOL_TERMINATED_HTTPS, PROTOCOL_UDP)
+ 
+ LISTENER_POOL_COMPATIBLE_PROTOCOLS = (
+     (PROTOCOL_TCP, PROTOCOL_TCP),
+     (PROTOCOL_HTTP, PROTOCOL_HTTP),
+     (PROTOCOL_HTTPS, PROTOCOL_HTTPS),
+-    (PROTOCOL_HTTP, PROTOCOL_TERMINATED_HTTPS))
++    (PROTOCOL_HTTP, PROTOCOL_TERMINATED_HTTPS),
++    (PROTOCOL_UDP, PROTOCOL_UDP))
+ 
+ 
+ HEALTH_MONITOR_PING = 'PING'
+Index: neutron_lbaas/services/loadbalancer/data_models.py
+===================================================================
+--- neutron_lbaas/services/loadbalancer/data_models.py	(revision 47630)
++++ neutron_lbaas/services/loadbalancer/data_models.py	(revision 47631)
+@@ -651,7 +651,9 @@
+               'loadbalancer_id', 'protocol', 'default_tls_container_id',
+               'sni_containers', 'protocol_port', 'connection_limit',
+               'admin_state_up', 'provisioning_status', 'operating_status',
+-              'default_pool', 'loadbalancer', 'l7_policies']
++              'default_pool', 'loadbalancer', 'l7_policies',
++              'redirect', 'redirect_protocol', 'redirect_port',
++              'mutual_authentication_u', 'ca_container_id']
+ 
+     def __init__(self, id=None, tenant_id=None, name=None, description=None,
+                  default_pool_id=None, loadbalancer_id=None, protocol=None,
+@@ -659,7 +661,9 @@
+                  protocol_port=None, connection_limit=None,
+                  admin_state_up=None, provisioning_status=None,
+                  operating_status=None, default_pool=None, loadbalancer=None,
+-                 l7_policies=None):
++                 l7_policies=None,
++                 redirect_up=None, redirect_protocol=None, redirect_port=None,
++                 mutual_authentication_up=None, ca_container_id=None):
+         self.id = id
+         self.tenant_id = tenant_id
+         self.name = name
+@@ -677,6 +681,11 @@
+         self.default_pool = default_pool
+         self.loadbalancer = loadbalancer
+         self.l7_policies = l7_policies or []
++        self.redirect_up = redirect_up
++        self.redirect_protocol = redirect_protocol
++        self.redirect_port = redirect_port
++        self.mutual_authentication_up = mutual_authentication_up
++        self.ca_container_id = ca_container_id
+ 
+     def attached_to_loadbalancer(self):
+         return bool(self.loadbalancer)
+@@ -721,13 +730,13 @@
+     fields = ['id', 'tenant_id', 'name', 'description', 'vip_subnet_id',
+               'vip_port_id', 'vip_address', 'provisioning_status',
+               'operating_status', 'admin_state_up', 'vip_port', 'stats',
+-              'provider', 'listeners', 'pools', 'flavor_id']
++              'provider', 'listeners', 'pools', 'flavor_id', 'bandwidth']
+ 
+     def __init__(self, id=None, tenant_id=None, name=None, description=None,
+                  vip_subnet_id=None, vip_port_id=None, vip_address=None,
+                  provisioning_status=None, operating_status=None,
+                  admin_state_up=None, vip_port=None, stats=None,
+-                 provider=None, listeners=None, pools=None, flavor_id=None):
++                 provider=None, listeners=None, pools=None, flavor_id=None, bandwidth=None):
+         self.id = id
+         self.tenant_id = tenant_id
+         self.name = name
+@@ -744,6 +753,7 @@
+         self.listeners = listeners or []
+         self.flavor_id = flavor_id
+         self.pools = pools or []
++        self.bandwidth = bandwidth
+ 
+     def attached_to_loadbalancer(self):
+         return True
+Index: neutron_lbaas/services/loadbalancer/plugin.py
+===================================================================
+--- neutron_lbaas/services/loadbalancer/plugin.py	(revision 47630)
++++ neutron_lbaas/services/loadbalancer/plugin.py	(revision 47631)
+@@ -46,6 +46,7 @@
+ from neutron_lbaas.extensions import sharedpools
+ from neutron_lbaas.services.loadbalancer import constants as lb_const
+ from neutron_lbaas.services.loadbalancer import data_models
++from neutron_lbaas.services.loadbalancer import icontrol_util
+ LOG = logging.getLogger(__name__)
+ CERT_MANAGER_PLUGIN = neutron_lbaas.common.cert_manager.get_backend()
+ 
+@@ -679,7 +680,7 @@
+             if db_l.default_pool_id:
+                 raise sharedpools.ListenerDefaultPoolAlreadySet(
+                     listener_id=db_l.id, pool_id=db_l.default_pool_id)
+-        if not lb_id:
++        if not lb_id and not listener_id:
+             raise sharedpools.PoolMustHaveLoadbalancer()
+         pool['loadbalancer_id'] = lb_id
+         self._validate_session_persistence_info(
+@@ -818,13 +819,83 @@
+         if not filters:
+             filters = {}
+         filters['pool_id'] = [pool_id]
+-        return [mem.to_api_dict() for mem in self.db.get_pool_members(
++        # return [mem.to_api_dict() for mem in self.db.get_pool_members(
++        #     context, filters=filters)]
++        mems = [mem.to_api_dict() for mem in self.db.get_pool_members(
+             context, filters=filters)]
++        if len(mems) == 0:
++            return mems
++        try:
++            #f5_ips = self.db.get_lbaas_agent_rebind_ips(context, pool['loadbalancers'].pop(0)['id'])
++            f5_ips = ['172.28.9.89']
++            LOG.info("f5 ips is %s. mems is %s", f5_ips, mems)
++            if len(f5_ips):
++                member_infos = icontrol_util.get_lb_member(f5_ips.pop(0), pool_id, mems[0]['tenant_id'])
++                LOG.info("f5 members is %s.", member_infos)
++                mems = self.update_f5_members_status(member_infos, mems)
++        except Exception as e:
++            LOG.error("get member status failed for %s" % e)
++        return mems
+ 
++
+     def get_pool_member(self, context, id, pool_id, fields=None):
+         self._check_pool_exists(context, pool_id)
+-        return self.db.get_pool_member(context, id).to_api_dict()
++        LOG.debug("get pool id %s member %s", pool_id, id)
++        pool_member = self.db.get_pool_member(context, id).to_api_dict()
++        # get lb_id from pool_id
++        pool = self.db.get_pool(context, pool_id).to_api_dict()
++        LOG.debug("pool is %s.", pool)
++        #listener = self.db.get_listener(context, pool['listener_id']).to_api_dict()
++        #LOG.debug("listener is %s,", listener)
++        try:
++            #f5_ips = self.db.get_lbaas_agent_rebind_ips(context, pool['loadbalancers'].pop(0)['id'])
++            f5_ips = ['172.28.9.89']
++            LOG.info("f5 ips is %s.", f5_ips)
++            if len(f5_ips):
++                member_infos = icontrol_util.get_lb_member(f5_ips.pop(0), pool_id, pool_member['tenant_id'])
++                LOG.info("f5 members is %s.", member_infos)
++                self.update_f5_member_status(member_infos, pool_member)
++        except Exception as e:
++            LOG.error("get member status failed for %s" % e)
++        # return self.db.get_pool_member(context, id).to_api_dict()
++        return pool_member
+ 
++    def update_f5_member_status(self, member_infos, pool_member):
++        if len(member_infos):
++            for member in member_infos:
++                if member['addr'] == pool_member['address']:
++                    if member['state'] == 'up':
++                        pool_member['member_status'] = 'ACTIVE'
++                        pool_member['operating_status'] = 'ONLINE'
++                    else:
++                        pool_member['member_status'] = 'INACTIVE'
++                        pool_member['operating_status'] = 'OFFLINE'
++        else:
++            pool_member['member_status'] = 'INACTIVE'
++            pool_member['operating_status'] = 'OFFLINE'
++
++    def update_f5_members_status(self, member_infos, pool_members):
++        update_members = []
++        LOG.debug("member_infos is %s, pool_members is %s.", member_infos, pool_members)
++        if len(member_infos):
++            for pool_member in pool_members:
++            # for member in member_infos:
++            #     for pool_member in pool_members:
++                for member in member_infos:
++                    if member['addr'] == pool_member['address']:
++                        if member['state'] == 'up':
++                            pool_member['member_status'] = 'ACTIVE'
++                            pool_member['operating_status'] = 'ONLINE'
++                        else:
++                            pool_member['member_status'] = 'INACTIVE'
++                            pool_member['operating_status'] = 'OFFLINE'
++                        update_members.append(pool_member)
++        else:
++            for pool_member in pool_members:
++                pool_member['member_status'] = 'INACTIVE'
++                pool_member['operating_status'] = 'OFFLINE'
++                update_members.append(pool_member)
++        return update_members
+     def _check_pool_already_has_healthmonitor(self, context, pool_id):
+         pool = self.db.get_pool(context, pool_id)
+         if pool.healthmonitor:
+Index: neutron_lbaas/services/loadbalancer/icontrol_util.py
+===================================================================
+--- neutron_lbaas/services/loadbalancer/icontrol_util.py	(nonexistent)
++++ neutron_lbaas/services/loadbalancer/icontrol_util.py	(revision 47631)
+@@ -0,0 +1,59 @@
++import json
++import requests
++from oslo_log import log as logging
++
++BIGIP_ADDRESS = '172.28.9.89'
++BIGIP_USER = 'admin'
++BIGIP_PASS = 'admin'
++
++LOG = logging.getLogger(__name__)
++
++def get_lb_member(ip=BIGIP_ADDRESS, name=None, folder='Common'):
++    bigip = requests.session()
++    bigip.auth = (BIGIP_USER, BIGIP_PASS)
++    bigip.verify = False
++    bigip.headers.update({'Content-Type': 'application/json'})
++    BASE_URL = 'https://%s/mgmt/tm' % ip
++    folder = str(folder).replace('/', '')
++    request_url = BASE_URL + '/ltm/pool/'
++    request_url += '~Project_' + folder + '~Project_' + name
++    request_url += '/members'
++    print(request_url)
++    result = bigip.get(request_url)
++    members = []
++    if result.status_code < 400:
++        LOG.info("success, result is %s.", result.text)
++        return_obj = json.loads(result.text)
++        if 'items' in return_obj:
++            for member in return_obj['items']:
++                (addr, port) = split_addr_port(member['name'])
++                members.append(
++                    {'addr': addr,
++                     'port': int(port),
++                     'state': member['state']})
++    else:
++        LOG.error("operation fail, cause %s", result.text)
++    return members
++
++def split_addr_port(dest):
++    if len(dest.split(':')) > 2:
++        # ipv6: bigip syntax is addr.port
++        parts = dest.split('.')
++    else:
++        # ipv4: bigip syntax is addr:port
++        parts = dest.split(':')
++    if len(parts[0].split('%')) > 1:
++        addr_parts = parts[0].split('%')
++        parts[0] = addr_parts[0]
++        print(addr_parts)
++        print(parts[0])
++    return (parts[0], parts[1])
++
++
++def main():
++    print("this message is from main function")
++    members = get_lb_member('dbebcbdf-0a85-4793-a348-b2f1031ef6f5','61a7756e94e749e28e56ca407a533259')
++    print(members)
++
++if __name__ == '__main__':
++    main()
+\ No newline at end of file

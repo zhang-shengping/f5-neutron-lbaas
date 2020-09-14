@@ -31,9 +31,9 @@ import sqlalchemy as sa
 from neutron.db import migration
 
 
-old_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP",
+old_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "UDP",
                              name="listener_protocolsv2")
-new_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "TERMINATED_HTTPS",
+new_listener_protocols = sa.Enum("HTTP", "HTTPS", "TCP", "TERMINATED_HTTPS", "UDP",
                              name="listener_protocolsv2")
 
 
