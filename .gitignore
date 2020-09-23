@@ -24,6 +24,7 @@ tempest.log
 *.sw?
 *~
 /.*
+!/.travis.yml
 !/.coveragerc
 !/.gitignore
 !/.gitreview
