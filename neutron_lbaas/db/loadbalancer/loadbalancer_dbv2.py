@@ -613,6 +613,14 @@ class LoadBalancerPluginDbv2(base_db.CommonDbMixin,
                 pool.session_persistence = sesspersist_db
             context.session.add(pool)
 
+    def is_last_loadbalancer(self, context, project_id, provisioning_status):
+        with context.session.begin(subtransactions=True):
+            lb_session = context.session.query(models.LoadBalancer)
+            lb  = models.LoadBalancer
+            last_lb = lb_session.filter(lb.project_id.in_(project_id), 
+                lb.provisioning_status.in_(provisioning_status)).first()
+        return last_lb
+
     def _delete_session_persistence(self, context, pool_id):
         with context.session.begin(subtransactions=True):
             sess_qry = context.session.query(models.SessionPersistenceV2)
