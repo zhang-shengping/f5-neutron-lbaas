@@ -1,0 +1,2 @@
+sudo neutron-db-manage --subproject neutron-lbaas revision --contract
+sudo neutron-db-manage --subproject neutron-lbaas upgrade --contract
